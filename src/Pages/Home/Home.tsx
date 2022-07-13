@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { MdKeyboardArrowUp } from "react-icons/md";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import chattingIllustration from "../../assets/images/chatting.svg";
 import Button from "../../Components/Button/Button";
 import styles from "./Home.module.scss";
-import Input from "../../Components/Input/Input";
+import { authSteps } from "../../utils/constants";
+import MobileNumberStep from "../../Components/AuthSteps/MobileNumberStep";
+import OtpStep from "../../Components/AuthSteps/OtpStep";
 const Home = () => {
   const [isDrawerExtended, setIsDrawerExtended] = useState<boolean>(false);
-  const [mobileNumber, setMobileNumber] = useState<string>("");
+  const [currentStep, setCurrentStep] = useState<number>(0);
 
   return (
     <div className="relative h-screen w-full">
@@ -59,33 +61,23 @@ const Home = () => {
           }
         />
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className={`text-gray-500 text-center text-base font-bold -mt-2  transition-all duration-300 ${
+          initial={{ opacity: 0, width: "fit-content" }}
+          animate={{ opacity: 1, width: "fit-content" }}
+          className={`text-gray-500 text-center text-base font-bold -mt-2  transition-all duration-300 mx-auto ${
             !isDrawerExtended ? "animate-bounce" : ""
           }`}
         >
-          {!isDrawerExtended ? "start now" : "continue with your phone"}
+          {!isDrawerExtended ? "start now" : authSteps[currentStep].title}
         </motion.p>
-        {isDrawerExtended && (
-          <>
-            <Input
-              type="tel"
-              className="text-center"
-              placeholder="your number here"
-              value={mobileNumber}
-              onChange={(e) => {
-                setMobileNumber(e.target.value);
-              }}
+        <AnimatePresence>
+          {isDrawerExtended && currentStep === 0 && (
+            <MobileNumberStep
+              currentStep={currentStep}
+              setCurrentStep={setCurrentStep}
             />
-            <Button
-              variant="primary"
-              className="block mx-auto"
-              buttonText="get opt"
-              onClick={() => {}}
-            />
-          </>
-        )}
+          )}
+          {isDrawerExtended && currentStep === 1 && <OtpStep />}
+        </AnimatePresence>
       </div>
     </div>
   );

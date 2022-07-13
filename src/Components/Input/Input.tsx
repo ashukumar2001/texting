@@ -1,14 +1,14 @@
 import React, { InputHTMLAttributes } from "react";
 
-const Input: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
-  onChange,
-  className,
-  ...rest
-}) => {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  inputRef?: React.RefObject<HTMLInputElement>;
+}
+
+const Input: React.FC<InputProps> = ({ className, inputRef, ...rest }) => {
   return (
     <div className="w-52 mx-auto">
       <input
-        onChange={onChange}
+        ref={inputRef}
         className={`border-gray-300 border rounded-md px-3 py-3 my-3 focus:outline-gray-500 text-gray-500 font-semibold focus:outline-1 w-full tracking-extra leading-4 placeholder:tracking-normal placeholder:font-medium transition-all ${className}`}
         {...rest}
       />
