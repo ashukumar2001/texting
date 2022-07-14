@@ -16,3 +16,6 @@
   animation: 0.9s ease 1 forwards ripple-effect;
   background-color: rgba(63, 63, 63, 0.4);
 }
+button:disabled {
+  opacity: 0.6;
+}

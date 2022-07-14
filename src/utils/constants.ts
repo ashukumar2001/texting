@@ -1,4 +1,5 @@
 export const mobileValidationRegEx = /^(\+\d{1,3}[- ]?)?\d{10}$/;
+export const otpValidationRegEx = /^\d{4}$/;
 export const authSteps = [
   {
     step: 0,

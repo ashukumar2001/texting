@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
-import { RefObject, useEffect, useRef } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
+import { otpValidationRegEx } from "../../utils/constants";
 import Button from "../Button/Button";
 import Input from "../Input/Input";
 
 const OtpStep = () => {
+  const [otp, setOtp] = useState<string>("");
   const otpInputRef: RefObject<HTMLInputElement> = useRef(null);
 
   useEffect(() => {
@@ -23,17 +25,20 @@ const OtpStep = () => {
         className="text-center"
         placeholder="otp here"
         inputRef={otpInputRef}
-        // value={mobileNumber}
-        // onChange={(e) => {
-        //   setMobileNumber(e.target.value);
-        // }}
-        max={4}
+        value={otp}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (value === "" || /^\d+$/.test(value)) {
+            setOtp(value);
+          }
+        }}
         maxLength={4}
       />
       <Button
         variant="primary"
         className="block mx-auto"
         buttonText="verify"
+        disabled={!otpValidationRegEx.test(otp)}
         // onClick={() => setCurrentStep(currentStep + 1)}
       />
     </motion.div>

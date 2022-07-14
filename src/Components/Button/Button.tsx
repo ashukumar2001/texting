@@ -14,8 +14,11 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   ...rest
 }) => {
-  const [coords, setCoords] = React.useState({ x: -1, y: -1 });
-  const [isRippling, setIsRippling] = React.useState(false);
+  const [coords, setCoords] = React.useState<{ x: number; y: number }>({
+    x: -1,
+    y: -1,
+  });
+  const [isRippling, setIsRippling] = React.useState<boolean>(false);
 
   useEffect(() => {
     if (coords.x !== -1 && coords.y !== -1) {
@@ -37,7 +40,7 @@ const Button: React.FC<ButtonProps> = ({
         setCoords({ x: e.clientX - rect.left, y: e.clientY - rect.top });
         onClick && onClick(e);
       }}
-      className={`${className} my-2 overflow-hidden relative ${
+      className={`${className} my-2 overflow-hidden relative transition-all duration-150 ${
         variant === "icon"
           ? "w-11 h-11 rounded-50 bg-gray-500"
           : `w-fit px-4 py-2 rounded-md text-base font-medium ${

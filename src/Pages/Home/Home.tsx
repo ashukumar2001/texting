@@ -7,9 +7,10 @@ import styles from "./Home.module.scss";
 import { authSteps } from "../../utils/constants";
 import MobileNumberStep from "../../Components/AuthSteps/MobileNumberStep";
 import OtpStep from "../../Components/AuthSteps/OtpStep";
+import { useAppSelector } from "../../hooks/redux";
 const Home = () => {
   const [isDrawerExtended, setIsDrawerExtended] = useState<boolean>(false);
-  const [currentStep, setCurrentStep] = useState<number>(0);
+  const currentPageStep = useAppSelector((state) => state.auth.currentPageStep);
 
   return (
     <div className="relative h-screen w-full">
@@ -67,16 +68,11 @@ const Home = () => {
             !isDrawerExtended ? "animate-bounce" : ""
           }`}
         >
-          {!isDrawerExtended ? "start now" : authSteps[currentStep].title}
+          {!isDrawerExtended ? "start now" : authSteps[currentPageStep].title}
         </motion.p>
         <AnimatePresence>
-          {isDrawerExtended && currentStep === 0 && (
-            <MobileNumberStep
-              currentStep={currentStep}
-              setCurrentStep={setCurrentStep}
-            />
-          )}
-          {isDrawerExtended && currentStep === 1 && <OtpStep />}
+          {isDrawerExtended && currentPageStep === 0 && <MobileNumberStep />}
+          {isDrawerExtended && currentPageStep === 1 && <OtpStep />}
         </AnimatePresence>
       </div>
     </div>
