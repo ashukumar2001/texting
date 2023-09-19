@@ -32,7 +32,7 @@ import { RedisMessageStore } from "./store/messageStore.js";
 import { RedisChatsStore } from "./store/chatsStore.js";
 import { originList } from "./constants/app.config.js";
 const app = express();
-
+console.log(REDIS_HOST, REDIS_PORT);
 const corsOriginWhiteList = [...originList, FRONTEND_URL];
 export const redisClient = new Redis({
   port: REDIS_PORT,
@@ -249,6 +249,10 @@ io.on("connection", async (socket) => {
     }
     console.log("disconnected: ", socket.id);
   });
+});
+
+io.on("error", () => {
+  console.log("error occured");
 });
 httpServer.listen(PORT, () =>
   console.log("server running at localhost:", PORT)
