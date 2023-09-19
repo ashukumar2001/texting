@@ -1,0 +1,13 @@
+.bottomDrawer {
+  height: 16vh;
+  min-height: 128px;
+
+  &.bottomDrawerExtended {
+    height: 36vh;
+    min-height: 288px;
+  }
+
+  .drawerArrowDown {
+    transform: rotate(180deg);
+  }
+}
