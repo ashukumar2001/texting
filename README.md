@@ -2,7 +2,7 @@
 
 A real-time chat application for one to one chat.
 
-![Texting Screenshot](https://drive.google.com/uc?export=view&id=1ueKpCldKLvzoR3UJV3W_00fXWqjMyjZ_)
+![Texting Screenshot](https://drive.google.com/uc?export=view&id=11LOGe2WDxtru_wVGqBi4c1EpKqflo15k)
 
 ## ✨ Features
 
