@@ -15,9 +15,7 @@ import {
 import UserService from "../services/user-service.js";
 import { googleAuthTokenValiation } from "../validators/index.js";
 import {
-  ENVIRONMENT_DEV,
   ENVIRONMENT_PROD,
-  FRONTEND_URL,
   GOOGLE_CLIENT_ID,
   HOST_DOMAIN,
 } from "../config/index.js";
