@@ -14,7 +14,12 @@ import {
 } from "../services/index.js";
 import UserService from "../services/user-service.js";
 import { googleAuthTokenValiation } from "../validators/index.js";
-import { ENVIRONMENT_PROD, GOOGLE_CLIENT_ID } from "../config/index.js";
+import {
+  ENVIRONMENT_DEV,
+  ENVIRONMENT_PROD,
+  FRONTEND_URL,
+  GOOGLE_CLIENT_ID,
+} from "../config/index.js";
 import {
   googleAuthPayloadValidation,
   mobileNumberValidation,
@@ -25,6 +30,7 @@ import {
   MAX_OTP_TRY_PER_TIME,
   OTP_TTL,
 } from "../constants/app.config.js";
+import { getHostNameFromURL } from "../lib/utils.js";
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 const verify = async (idToken) => {
   const ticket = await client.verifyIdToken({
@@ -106,7 +112,12 @@ class AuthController {
         maxAge: 1000 * 60 * 60 * 24 * 15,
         httpOnly: true,
         sameSite: "None",
-        secure: true,
+        ...(ENVIRONMENT_PROD
+          ? {
+              secure: true,
+              domain: getHostNameFromURL(FRONTEND_URL),
+            }
+          : { secure: false }),
       });
 
       res.status(200).send({ status: true, data: { user, accessToken } });
