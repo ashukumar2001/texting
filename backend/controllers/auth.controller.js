@@ -15,10 +15,9 @@ import {
 import UserService from "../services/user-service.js";
 import { googleAuthTokenValiation } from "../validators/index.js";
 import {
-  ENVIRONMENT_DEV,
   ENVIRONMENT_PROD,
-  FRONTEND_URL,
   GOOGLE_CLIENT_ID,
+  HOSTNAME,
 } from "../config/index.js";
 import {
   googleAuthPayloadValidation,
@@ -115,7 +114,7 @@ class AuthController {
         ...(ENVIRONMENT_PROD
           ? {
               secure: true,
-              domain: getHostNameFromURL(FRONTEND_URL),
+              domain: HOSTNAME,
             }
           : { secure: false }),
       });
