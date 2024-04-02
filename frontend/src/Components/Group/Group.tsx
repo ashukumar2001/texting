@@ -27,7 +27,7 @@ const Group: React.FC<groupProps> = ({
     >
       <div className="w-full px-2 my-2 cursor-pointer">
         <div className="border-b border-gray-200 border-solid h-20  flex items-start justify-start p-3 ">
-          <div className="h-12 min-w-profileWidth flex justify-center items-center rounded-full border relative">
+          <div className="h-12 w-12 min-w-profileWidth flex justify-center items-center rounded-full border relative">
             <img
               src={participant?.profilePicture}
               onError={(e) => {

@@ -17,13 +17,12 @@ export const isMobileDevice = (value: string) =>
   detectMobileDeviceRegEx.test(value);
 export const getNameInitials = (data: string) => {
   const nameArr = data?.split(" ") || [];
-  return `${nameArr[0][0]}${
-    nameArr?.length > 1 ? nameArr[nameArr.length - 1][0] : ""
-  }`;
+  return `${nameArr[0][0]}${nameArr?.length > 1 ? nameArr[nameArr.length - 1][0] : ""
+    }`;
 };
 export const getAvatarUrlFromSeed = (seed: string = "?") => {
   const nameInitials = getNameInitials(seed);
-  return import.meta.env.VITE_AVATARS_URL + nameInitials + ".svg";
+  return import.meta.env.VITE_AVATARS_URL + nameInitials;
 };
 
 export const urlB64ToUint8Array = (base64String: string) => {
@@ -47,9 +46,9 @@ export const checkIsStackMessage = (
 ) => {
   return Boolean(
     currentMessage &&
-      nextMessage &&
-      currentMessage.from === nextMessage.from &&
-      getTimeString(currentMessage.content.timestamp) ===
-        getTimeString(nextMessage.content.timestamp)
+    nextMessage &&
+    currentMessage.from === nextMessage.from &&
+    getTimeString(currentMessage.content.timestamp) ===
+    getTimeString(nextMessage.content.timestamp)
   );
 };
