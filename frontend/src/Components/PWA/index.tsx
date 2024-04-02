@@ -25,18 +25,22 @@ const PWA = () => {
   });
 
   const subscribeUserToPush = useCallback(() => {
-    const applicationServerKey = urlB64ToUint8Array(
-      import.meta.env.VITE_APPLICATION_SERVER_KEY
-    );
-    swRegistration?.pushManager
-      .subscribe({
-        userVisibleOnly: true,
-        applicationServerKey,
-      })
-      .then((subscription) => {
-        // save subscription to server
-        saveSubscriptionToServer(subscription);
-      });
+    if (swRegistration && swRegistration?.pushManager) {
+      const applicationServerKey = urlB64ToUint8Array(
+        import.meta.env.VITE_APPLICATION_SERVER_KEY
+      );
+      swRegistration?.pushManager
+        .subscribe({
+          userVisibleOnly: true,
+          applicationServerKey,
+        })
+        .then((subscription) => {
+          // save subscription to server
+          saveSubscriptionToServer(subscription);
+        });
+    } else {
+      console.error("Push Manager is not available");
+    }
   }, [swRegistration]);
 
   const saveSubscriptionToServer = useCallback(
@@ -47,7 +51,7 @@ const PWA = () => {
           userAgent: navigator.userAgent,
         }).unwrap();
       } catch (error) {
-        // unsubscribe if request is not successfull
+        // unsubscribe if request is not successful
         if (error && (error as ErrorInterface)?.originStatus !== 401) {
           subscription.unsubscribe();
         }
@@ -57,8 +61,8 @@ const PWA = () => {
   );
 
   useEffect(() => {
-    if (swRegistration) {
-      swRegistration?.pushManager.getSubscription().then((subs) => {
+    if (swRegistration && swRegistration?.pushManager) {
+      swRegistration.pushManager.getSubscription().then((subs) => {
         const isSubscribed = !(subs === null);
         // subscribe logged in user
         if (!isSubscribed && user.isMobileVerified && user.mobileNumber) {
