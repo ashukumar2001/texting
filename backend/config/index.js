@@ -21,6 +21,7 @@ let {
   VAPID_KEY_PRIVATE,
   GCM_API_KEY,
   FRONTEND_URL,
+  HOST_DOMAIN,
 } = process.env;
 
 console.log(process.env.NODE_ENV);
@@ -51,4 +52,5 @@ export {
   VAPID_KEY_PUBLIC,
   GCM_API_KEY,
   FRONTEND_URL,
+  HOST_DOMAIN,
 };

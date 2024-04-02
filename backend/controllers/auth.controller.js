@@ -19,6 +19,7 @@ import {
   ENVIRONMENT_PROD,
   FRONTEND_URL,
   GOOGLE_CLIENT_ID,
+  HOST_DOMAIN,
 } from "../config/index.js";
 import {
   googleAuthPayloadValidation,
@@ -30,7 +31,6 @@ import {
   MAX_OTP_TRY_PER_TIME,
   OTP_TTL,
 } from "../constants/app.config.js";
-import { getHostNameFromURL } from "../lib/utils.js";
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 const verify = async (idToken) => {
   const ticket = await client.verifyIdToken({
@@ -115,7 +115,7 @@ class AuthController {
         ...(ENVIRONMENT_PROD
           ? {
               secure: true,
-              domain: getHostNameFromURL(FRONTEND_URL),
+              domain: HOST_DOMAIN,
             }
           : { secure: false }),
       });
