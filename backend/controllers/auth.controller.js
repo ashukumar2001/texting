@@ -14,11 +14,7 @@ import {
 } from "../services/index.js";
 import UserService from "../services/user-service.js";
 import { googleAuthTokenValiation } from "../validators/index.js";
-import {
-  ENVIRONMENT_PROD,
-  GOOGLE_CLIENT_ID,
-  HOST_DOMAIN,
-} from "../config/index.js";
+import { ENVIRONMENT_PROD, GOOGLE_CLIENT_ID } from "../config/index.js";
 import {
   googleAuthPayloadValidation,
   mobileNumberValidation,
@@ -111,7 +107,6 @@ class AuthController {
         httpOnly: true,
         sameSite: "None",
         secure: ENVIRONMENT_PROD,
-        ...(ENVIRONMENT_PROD && { domain: HOST_DOMAIN }),
       });
 
       res.status(200).send({ status: true, data: { user, accessToken } });
