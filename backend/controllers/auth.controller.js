@@ -111,6 +111,7 @@ class AuthController {
         httpOnly: true,
         sameSite: "None",
         secure: ENVIRONMENT_PROD,
+        ...(ENVIRONMENT_PROD && { domain: HOST_DOMAIN }),
       });
 
       res.status(200).send({ status: true, data: { user, accessToken } });
