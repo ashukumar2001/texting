@@ -110,12 +110,7 @@ class AuthController {
         maxAge: 1000 * 60 * 60 * 24 * 15,
         httpOnly: true,
         sameSite: "None",
-        ...(ENVIRONMENT_PROD
-          ? {
-              secure: true,
-              domain: HOST_DOMAIN,
-            }
-          : { secure: false }),
+        secure: ENVIRONMENT_PROD,
       });
 
       res.status(200).send({ status: true, data: { user, accessToken } });
