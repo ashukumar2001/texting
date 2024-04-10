@@ -105,8 +105,10 @@ class AuthController {
       res.cookie("refreshToken", refreshToken, {
         maxAge: 1000 * 60 * 60 * 24 * 15,
         httpOnly: true,
-        sameSite: "None",
-        secure: ENVIRONMENT_PROD,
+        ...(ENVIRONMENT_PROD && {
+          sameSite: "None",
+          secure: true,
+        }),
       });
 
       res.status(200).send({ status: true, data: { user, accessToken } });
@@ -184,12 +186,11 @@ class AuthController {
         },
       });
     } catch (err) {
-      console.log(err.message);
       res.status(500).send({ status: false, message: "Unable to send sms" });
     }
   }
 
-  async verifyOtp(req, res) {
+  async verifyOtp(req, res, next) {
     // get all parameters
     const { otp, hash, mobileNumber } = req.body;
 
@@ -225,7 +226,7 @@ class AuthController {
     } catch (error) {
       return next(error);
     }
-    if (user._id) {
+    if (user?._id) {
       res.status(200).send({ status: true, user });
     } else {
       return next(ErrorHandlerService.serverError());
