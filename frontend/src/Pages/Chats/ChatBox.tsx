@@ -16,6 +16,7 @@ import {
 } from "./chatApiSlice";
 import { clearCurrentInbox, setCurrentPage } from "./chatSlice";
 import ChatMessage from "./ChatMessage";
+import UserImage from "../../Components/UserImage";
 
 export interface MessageInterface {
   content: {
@@ -184,25 +185,11 @@ const ChatBox = () => {
             icon={<MdArrowBack className="text-gray-600 text-2xl" />}
             className="flex justify-center items-center bg-transparent -ml-3 mr-2"
           />
-
-          <div className="h-12 w-12 flex justify-center items-center rounded-full border relative">
-            <img
-              src={currentInboxData?.participant?.profilePicture}
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = getAvatarUrlFromSeed(
-                  currentInboxData?.participant?.fullName
-                );
-              }}
-              alt={currentInboxData?.participant?.fullName}
-              className="w-full h-full rounded-full"
-            />
-            {onlineStatusResult?.online_status && (
-              <div
-                title="online"
-                className="outline-2 outline outline-gray-0 h-3 w-3 rounded-full bg-green-active absolute -right-1 -bottom-2 -translate-y-1/2 -translate-x-1/2"
-              ></div>
-            )}
-          </div>
+          <UserImage
+            online_status={onlineStatusResult?.online_status}
+            fullName={currentInboxData?.participant?.fullName}
+            profilePicture={currentInboxData?.participant?.profilePicture}
+          />
           <p className="text-gray-600 text-base font-bold tracking-wider ml-4">
             {currentInboxData?.participant?.fullName}
           </p>

@@ -3,6 +3,7 @@ import { MouseEventHandler, useId } from "react";
 import { Link } from "react-router-dom";
 import { inboxInterface } from "../../Pages/Chats/chatSlice";
 import { getAvatarUrlFromSeed } from "../../utils/helpers";
+import UserImage from "../UserImage";
 
 interface groupProps extends inboxInterface {
   onClick: MouseEventHandler<HTMLAnchorElement>;
@@ -27,19 +28,10 @@ const Group: React.FC<groupProps> = ({
     >
       <div className="w-full px-2 my-2 cursor-pointer">
         <div className="border-b border-gray-200 border-solid h-20  flex items-start justify-start p-3 ">
-          <div className="h-12 w-12 min-w-profileWidth flex justify-center items-center rounded-full border relative">
-            <img
-              src={participant?.profilePicture}
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = getAvatarUrlFromSeed(
-                  participant?.fullName
-                );
-              }}
-              alt={participant?.fullName}
-              className="w-full h-full rounded-full"
-            />
-            {/* <div className="outline-2 outline outline-gray-0 h-3 w-3 rounded-full bg-green-active absolute -right-1 -bottom-2 -translate-y-1/2 -translate-x-1/2"></div> */}
-          </div>
+          <UserImage
+            fullName={participant?.fullName}
+            profilePicture={participant?.profilePicture}
+          />
           <div className="flex-col ml-3 mr-2 grow">
             <div className="flex grow justify-between">
               <p className="text-gray-600 text-base font-bold tracking-wider mb-1">
