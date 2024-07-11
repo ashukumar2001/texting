@@ -15,6 +15,7 @@ import Button from "../Button/Button";
 import ContextMenu, { ContextMenuItem } from "../Menu/ContextMenu";
 import { clearUserSearch, setUserSearchQuery } from "./searchSlice";
 import { useNavigate } from "react-router-dom";
+import { userNameValidationRegEx } from "../../utils/constants";
 
 const UserSearch = () => {
   const [isSearch, setIsSearch] = useState<boolean>(false);
@@ -38,7 +39,7 @@ const UserSearch = () => {
   }, [isSearch]);
 
   useEffect(() => {
-    if (query && query.length === 10 && /^[0-9]+$/.test(query)) {
+    if (query && userNameValidationRegEx.test(query)) {
       dispatch(setUserSearchQuery(query));
     } else if (!query) {
       dispatch(clearUserSearch());
@@ -135,16 +136,14 @@ const UserSearch = () => {
               />
               <input
                 ref={searchInputRef}
-                type="tel"
-                maxLength={10}
+                type="text"
                 spellCheck={false}
-                placeholder="search mobile number"
+                placeholder="search username..."
                 value={query}
-                pattern="/^[0-9]+$/"
                 onChange={(e) => {
                   const { value } = e.target;
 
-                  if (!value || /^[0-9]+$/.test(value)) {
+                  if (!value || userNameValidationRegEx.test(value)) {
                     setQuery(value);
                   }
                 }}

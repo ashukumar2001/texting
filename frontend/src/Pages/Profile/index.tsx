@@ -5,7 +5,7 @@ import { getAvatarUrlFromSeed } from "../../utils/helpers";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { profilePicture, fullName, mobileNumber, email } = useAuth();
+  const { profilePicture, fullName, email, userName } = useAuth();
   return (
     <>
       <PageHeader title="Profile" handleGoBack={() => navigate(-1)} />
@@ -21,11 +21,12 @@ const Profile = () => {
             }}
           />
         </div>
+
         <p className="font-bold text-gray-500 my-1  text-lg tracking-wide">
           {fullName}
         </p>
         <p className="font-bold text-gray-500 my-1  text-lg tracking-wide">
-          {mobileNumber}
+          @{userName}
         </p>
         <p className="font-bold text-gray-500 my-1  text-lg tracking-wide">
           {email}

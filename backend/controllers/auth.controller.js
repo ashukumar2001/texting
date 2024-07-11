@@ -72,6 +72,7 @@ class AuthController {
           isEmailVerified: payload.email_verified,
           fullName: payload.name,
           profilePicture: payload.picture,
+          isActivated: payload.email_verified,
         });
 
         if (!user) {

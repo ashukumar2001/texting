@@ -10,19 +10,15 @@ export const authApiSlice = apiSlice.injectEndpoints({
         body: { ...creds },
       }),
     }),
-    sendOtpRequest: build.mutation({
-      query: (creds: { mobileNumber: string }) => ({
-        url: "otp-request",
+    updateUserName: build.mutation<any, string>({
+      query: (userName) => ({
+        url: "update-username",
         method: "POST",
-        body: { ...creds },
-      }),
+        body: { userName },
+      })
     }),
-    verifyOtp: build.mutation({
-      query: (creds) => ({
-        url: "verify-otp",
-        method: "POST",
-        body: { ...creds },
-      }),
+    userNameAvailability: build.query<any, string>({
+      query: (userName) => ({ params: { userName }, url: "username-availability" }),
     }),
     activateAccount: build.mutation<User, { fullName: string }>({
       query: (data) => ({
@@ -41,7 +37,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useAuthenticateMutation,
-  useVerifyOtpMutation,
   useActivateAccountMutation,
-  useSendOtpRequestMutation,
+  useUpdateUserNameMutation,
+  useUserNameAvailabilityQuery,
 } = authApiSlice;

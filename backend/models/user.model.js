@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import { generateUsername } from "unique-username-generator";
 const userSchema = new mongoose.Schema(
   {
     fullName: {
@@ -12,22 +12,18 @@ const userSchema = new mongoose.Schema(
       require: false,
       trim: true,
     },
-    mobileNumber: {
+    userName: {
       type: String,
       required: false,
       trim: true,
       unique: true,
+      default: () => generateUsername(),
     },
     email: {
       type: String,
       unique: true,
       trim: true,
       required: true,
-    },
-    isMobileVerified: {
-      type: Boolean,
-      required: false,
-      default: false,
     },
     isEmailVerified: {
       type: Boolean,
@@ -37,7 +33,7 @@ const userSchema = new mongoose.Schema(
     isActivated: {
       type: Boolean,
       required: false,
-      default: false,
+      default: true,
     },
   },
   { timestamps: true }

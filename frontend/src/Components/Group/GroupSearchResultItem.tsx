@@ -12,7 +12,7 @@ const GroupSearchResultItem = ({
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const handleClickOnUser = async () => {
-    navigate(`${participant?.mobileNumber}`);
+    navigate(participant?.userName || "");
     dispatch(
       setCurrentInbox({
         participant,

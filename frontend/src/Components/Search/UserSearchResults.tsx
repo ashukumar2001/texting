@@ -12,11 +12,9 @@ const UserSearchResults = () => {
   const dispatch = useAppDispatch();
   const [searchResultData, setSearchResultData] =
     useState<inboxInterface | null>(null);
-  const [fetchUser, { data, isLoading, isSuccess, isError, error }] =
+  const [fetchUser, { data, isLoading, isError, error }] =
     useLazySearchUserQuery();
-  const userMobileNumber = useAppSelector(
-    (state) => state.auth.user?.mobileNumber
-  );
+  const userName = useAppSelector((state) => state.auth.user?.userName);
   const { data: inboxList } = useGetInboxListQuery({});
   useEffect(() => {
     if (searchQuery) {
@@ -24,7 +22,7 @@ const UserSearchResults = () => {
         (inboxList &&
           inboxList?.length > 0 &&
           inboxList?.find(
-            (item) => item.participant?.mobileNumber === searchQuery
+            (item) => item.participant?.userName === searchQuery
           )) ||
         null;
 
@@ -37,7 +35,7 @@ const UserSearchResults = () => {
   }, [searchQuery]);
 
   useEffect(() => {
-    if (data && data.mobileNumber) {
+    if (data && data.userName) {
       setSearchResultData({
         participant: data,
         group: "",
@@ -54,9 +52,7 @@ const UserSearchResults = () => {
         <Group
           {...searchResultData}
           onClick={() => {
-            if (
-              userMobileNumber !== searchResultData.participant?.mobileNumber
-            ) {
+            if (userName !== searchResultData.participant?.userName) {
               dispatch(
                 setCurrentInbox({
                   groupId: searchResultData.group,

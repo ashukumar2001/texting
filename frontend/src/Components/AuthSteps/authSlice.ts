@@ -1,12 +1,13 @@
-import { createSlice, Dispatch } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 
 export interface User {
   _id: string;
   fullName?: string;
-  mobileNumber?: string;
-  isMobileVerified: boolean;
+  isUserAuthenticated?: boolean;
   isActivated?: boolean;
+  userName?: string;
+  isEmailVerified?: boolean;
   createdAt?: string;
   accessToken?: string;
   profilePicture?: string;
@@ -14,24 +15,14 @@ export interface User {
 }
 
 export interface Auth {
-  isMobileVerified: boolean;
-  mobileNumber: string;
-  otp: string;
-  hash: string;
   user: User;
   currentPageStep: number;
   sessionId?: string | null;
 }
 
 const initialState: Auth = {
-  isMobileVerified: false,
-  mobileNumber: "",
-  otp: "",
-  hash: "",
   user: {
     _id: "",
-    mobileNumber: "",
-    isMobileVerified: false,
     createdAt: "",
     accessToken: "",
   },
@@ -46,48 +37,15 @@ export const authSlice = createSlice({
     nextStep: (state) => {
       state.currentPageStep = state.currentPageStep + 1;
     },
-    backToMobileNumberStep: (state) => {
-      state.hash = "";
-      // state.mobileNumber = "";
-      state.currentPageStep = state.currentPageStep - 1;
-    },
-
     authenticateRequestSuccess: (
       state,
       { payload }: { payload: { user: User; accessToken: string } }
     ) => {
-      // state.hash = payload.hash;
-      // state.mobileNumber = payload.mobileNumber;
       state.user = {
         ...(payload.user || initialState.user),
+        isUserAuthenticated: payload.user?.isActivated && payload.user?.isEmailVerified,
         accessToken: payload.accessToken,
       };
-      if (!payload?.user?.isMobileVerified) {
-        state.currentPageStep = state.currentPageStep + 1;
-      }
-    },
-
-    sendOtpRequestFulfilled: (
-      state,
-      {
-        payload,
-      }: { payload: { hash: string; mobileNumber: string; resend?: boolean } }
-    ) => {
-      state.hash = payload.hash;
-      state.mobileNumber = payload.mobileNumber;
-      if (!payload.resend) {
-        state.currentPageStep = state.currentPageStep + 1;
-      }
-    },
-
-    verifyOtpRequestFulfilled: (state, { payload }: { payload: Auth }) => {
-      state.currentPageStep = payload.currentPageStep;
-      state.hash = payload.hash;
-      state.user.mobileNumber = payload.user.mobileNumber;
-      state.user.isMobileVerified = payload?.user?.isMobileVerified;
-      state.user.isActivated = payload?.user?.isActivated;
-      state.otp = payload.otp;
-      state.isMobileVerified = payload.isMobileVerified;
     },
     // Refresh credentials
     refreshAccessToken: (state, { payload }: { payload: string }) => {
@@ -100,19 +58,16 @@ export const authSlice = createSlice({
     logOut: (state) => {
       state.user = {
         _id: "",
-        mobileNumber: "",
-        isMobileVerified: false,
         createdAt: "",
         accessToken: "",
       };
-      state.isMobileVerified = false;
       state.currentPageStep = 0;
       state.sessionId = null;
     },
 
     activateUserFullfilled: (state, { payload }) => {
       if (state.user) {
-        state.user.isActivated = payload.isActivated || false;
+        state.user.isUserAuthenticated = payload.isActivated || false;
         state.user.fullName = payload.fullName;
       }
     },
@@ -125,21 +80,14 @@ export const authSlice = createSlice({
 export const {
   nextStep,
 
-  backToMobileNumberStep,
   // Authenticate
   authenticateRequestSuccess,
-
-  // Send otp request fullfilled
-  sendOtpRequestFulfilled,
 
   // Refresh token
   refreshAccessToken,
 
   // logout action
   logOut,
-
-  // Verify Otp
-  verifyOtpRequestFulfilled,
 
   // Activate User Profile
   activateUserFullfilled,
@@ -154,5 +102,3 @@ export const selectToken = (state: RootState) => state.auth.user.accessToken;
 export const selectSessionId = (state: RootState) => state.auth.sessionId;
 export const selectAccessToken = (state: RootState) =>
   state?.auth?.user?.accessToken;
-export const selectMobileVerified = (state: RootState) =>
-  state?.auth?.user?.isMobileVerified;
