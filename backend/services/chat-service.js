@@ -56,8 +56,8 @@ class ChatService {
         data = await InboxModel.populate(aggregate, {
           path: "participant",
           model: "User",
-          // select only fullName and mobileNumber
-          select: "fullName mobileNumber profilePicture",
+          // select only fullName and userName
+          select: "fullName userName profilePicture",
           strictPopulate: false,
           ...(filters && { justOne: true }),
         });
@@ -113,7 +113,7 @@ class ChatService {
             inboxList = await InboxModel.populate(inboxList, {
               path: "participant",
               model: "User",
-              select: "fullName mobileNumber profilePicture",
+              select: "fullName userName profilePicture",
             });
             inboxList?.map((item) => {
               chatsStore.addInbox(
@@ -133,12 +133,24 @@ class ChatService {
     return { group, groupMembers, error, inboxList };
   }
 
-  async searchUserByMobileNumber(mobileNumber) {
-    if (mobileNumber) {
-      // find user with mobileNumber
+  async searchUserByMobileNumber(userName) {
+    if (userName) {
+      // find user with userName
       const user = await UserService.findUser(
-        { mobileNumber },
-        "fullName mobileNumber profilePicture"
+        { userName },
+        "fullName userName profilePicture"
+      );
+      return user;
+    } else {
+      return null;
+    }
+  }
+  async searchUserByUserName(userName) {
+    if (userName) {
+      // find user with userName
+      const user = await UserService.findUser(
+        { userName },
+        "fullName userName profilePicture"
       );
       return user;
     } else {

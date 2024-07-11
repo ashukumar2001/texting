@@ -4,7 +4,7 @@ import { MessageInterface } from "./ChatBox";
 export interface inboxParticipantInterface {
   _id: string;
   fullName: string;
-  mobileNumber: string;
+  userName: string;
   profilePicture: string;
 }
 

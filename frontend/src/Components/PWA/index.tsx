@@ -65,7 +65,7 @@ const PWA = () => {
       swRegistration.pushManager.getSubscription().then((subs) => {
         const isSubscribed = !(subs === null);
         // subscribe logged in user
-        if (!isSubscribed && user.isMobileVerified && user.mobileNumber) {
+        if (!isSubscribed && !!user.isUserAuthenticated) {
           if (Notification.permission === "granted") {
             subscribeUserToPush();
           } else {
@@ -75,12 +75,12 @@ const PWA = () => {
             });
           }
           // unsubscribe if user is logged out
-        } else if (isSubscribed && (!user.isActivated || !user.mobileNumber)) {
+        } else if (isSubscribed && !Boolean(user.isUserAuthenticated)) {
           subs.unsubscribe();
         }
       });
     }
-  }, [user.isMobileVerified, user.mobileNumber, swRegistration]);
+  }, [user.isUserAuthenticated, swRegistration]);
   return <></>;
 };
 

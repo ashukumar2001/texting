@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface userSearchResultInterface {
   _id: string;
   fullName: string;
-  mobileNumber: string;
+  userName: string;
   profilePicture: string;
 }
 export interface userSearchInterface {

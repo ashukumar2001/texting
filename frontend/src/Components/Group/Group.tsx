@@ -18,11 +18,12 @@ const Group: React.FC<groupProps> = ({
   onClick,
 }) => {
   const key = useId();
+  if (!participant?.userName) <></>;
   return (
     <Link
       key={`${participant?._id}-${key}`}
       state={{ inboxId, group, participant }}
-      to={participant?.mobileNumber || ""}
+      to={participant?.userName || ""}
       onClick={onClick}
     >
       <div className="w-full px-2 my-2 cursor-pointer">

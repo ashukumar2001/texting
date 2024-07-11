@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { useRefreshAccessTokenMutation } from "../api/apiSlice";
 import {
   refreshAccessToken,
-  selectAccessToken,
-  selectMobileVerified,
   selectSessionId,
   selectToken,
   setSessionId,
@@ -34,15 +32,15 @@ const useInitializeSockets = () => {
   const token = useAppSelector(selectToken);
   const currentInbox = useAppSelector((state) => state.chat.currentInobx);
   const sessionId = useAppSelector(selectSessionId);
-  const isMobileVerified = useAppSelector(selectMobileVerified);
+  const isUserAuthenticated = useAppSelector(state => !!state.auth.user.isUserAuthenticated);
   const { groupId: currentGroupId } = useAppSelector(
     (state) => state.chat.currentInobx
   );
   const [refreshTokenRequest] = useRefreshAccessTokenMutation();
   const dispatch = useAppDispatch();
   useEffect(() => {
-    if (token && isMobileVerified) initializeSocket(token, sessionId);
-  }, [token, initializeSocket, sessionId, isMobileVerified]);
+    if (token && isUserAuthenticated) initializeSocket(token, sessionId);
+  }, [token, initializeSocket, sessionId, isUserAuthenticated]);
 
   useEffect(() => {
     socket.on("session", ({ sessionId, userId }) => {

@@ -5,24 +5,20 @@ import chattingIllustration from "../../assets/images/chatting.svg";
 import Button from "../../Components/Button/Button";
 import styles from "./Login.module.scss";
 import { authSteps } from "../../utils/constants";
-import OtpStep from "../../Components/AuthSteps/OtpStep";
 import { useAppSelector } from "../../Hooks/redux";
-import NameInputStep from "../../Components/AuthSteps/NameInputStep";
-import MobileVerifiedStep from "../../Components/AuthSteps/MobileVerifiedStep";
 import { useNavigate } from "react-router-dom";
 import AnimatedPage from "../../Components/Animated/AnimatedPage";
 import SignInStep from "../../Components/AuthSteps/SignInStep";
-import MobileNumberStep from "../../Components/AuthSteps/MobileNumberStep";
 const Home = () => {
   const [isDrawerExtended, setIsDrawerExtended] = useState<boolean>(false);
   const { currentPageStep, user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user.isMobileVerified && user.isActivated) {
+    if (user.isUserAuthenticated) {
       navigate("/chats", { replace: true });
     }
-  }, [user.isActivated]);
+  }, [user.isUserAuthenticated]);
 
   return (
     <AnimatedPage isInitial={false} className="relative h-screen w-full">
@@ -77,7 +73,6 @@ const Home = () => {
               />
             }
           />
-          {/* )} */}
           <div>
             <motion.p
               initial={{ opacity: 0, width: "fit-content" }}
@@ -86,23 +81,12 @@ const Home = () => {
                 !isDrawerExtended ? "animate-bounce" : ""
               }`}
             >
-              {/* {!isDrawerExtended && "start now"} */}
               {!isDrawerExtended
                 ? "start now"
                 : authSteps[currentPageStep].title}
             </motion.p>
             <AnimatePresence>
               {isDrawerExtended && currentPageStep === 0 && <SignInStep />}
-              {isDrawerExtended && currentPageStep === 1 && (
-                <MobileNumberStep />
-              )}
-              {currentPageStep === 2 && (
-                <OtpStep className={!isDrawerExtended ? "hidden" : ""} />
-              )}
-              {isDrawerExtended && currentPageStep === 3 && (
-                <MobileVerifiedStep />
-              )}
-              {isDrawerExtended && currentPageStep === 3 && <NameInputStep />}
             </AnimatePresence>
           </div>
         </div>

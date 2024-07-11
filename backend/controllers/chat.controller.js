@@ -1,7 +1,6 @@
 import { chatsStore, messageStore } from "../index.js";
 import { GroupMembersModel, GroupModel, InboxModel } from "../models/index.js";
 import { ChatService, ErrorHandlerService } from "../services/index.js";
-import { mobileNumberValidation } from "../validators/index.js";
 class ChatController {
   async getInbox(req, res, next) {
     try {
@@ -80,12 +79,12 @@ class ChatController {
     }
   }
   async searchUser(req, res, next) {
-    const mobileNumber = req.query.q;
-    const { error } = mobileNumberValidation.validate({ mobileNumber });
-    if (error) {
-      return next(error);
+    const userName = req.query.q;
+    if (!/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/.test(userName)) {
+      return next(new Error("Invalid user name"));
     }
-    const user = await ChatService.searchUserByMobileNumber(mobileNumber);
+
+    const user = await ChatService.searchUserByUserName(userName);
     if (!user) {
       return next(ErrorHandlerService.notFound("No results found"));
     }
@@ -95,7 +94,7 @@ class ChatController {
       result: {
         _id: user._id,
         fullName: user.fullName,
-        mobileNumber: user.mobileNumber,
+        userName: user.userName,
         profilePicture: user.profilePicture,
       },
     });

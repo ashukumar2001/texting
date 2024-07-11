@@ -17,7 +17,8 @@ const NameInputStep = () => {
       if ("data" in activateAccountResponse && activateAccountResponse.data) {
         dispatch(
           activateUserFullfilled({
-            isActivated: activateAccountResponse.data.isActivated,
+            isUserAuthenticated:
+              activateAccountResponse.data.isUserAuthenticated,
             fullName: activateAccountResponse.data.fullName,
           })
         );

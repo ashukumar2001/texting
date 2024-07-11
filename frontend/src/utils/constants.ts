@@ -1,14 +1,19 @@
 export const mobileValidationRegEx = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 export const otpValidationRegEx = /^\d{4}$/;
 export const detectMobileDeviceRegEx = /android|iphone|kindle|ipad/i;
+export const userNameValidationRegEx = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/
 export const authSteps = [
   {
     step: 0,
     title: "sign in",
   },
+  // {
+  //   step: 1,
+  //   title: "continue with your phone",
+  // },
   {
     step: 1,
-    title: "continue with your phone",
+    title: "create your username",
   },
   {
     step: 2,

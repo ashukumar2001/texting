@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { DATABASE_URL } from "./config/index.js";
-
+console.log(DATABASE_URL);
 const DbConnect = () => {
   mongoose.connect(DATABASE_URL, {
     useNewUrlParser: true,
