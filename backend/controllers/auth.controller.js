@@ -14,7 +14,11 @@ import {
 } from "../services/index.js";
 import UserService from "../services/user-service.js";
 import { googleAuthTokenValiation } from "../validators/index.js";
-import { ENVIRONMENT_PROD, GOOGLE_CLIENT_ID } from "../config/index.js";
+import {
+  ENVIRONMENT_PROD,
+  FRONTEND_URL,
+  GOOGLE_CLIENT_ID,
+} from "../config/index.js";
 import {
   googleAuthPayloadValidation,
   mobileNumberValidation,
@@ -105,14 +109,15 @@ class AuthController {
 
       res.cookie("refreshToken", refreshToken, {
         maxAge: 1000 * 60 * 60 * 24 * 15,
+        secure: true,
         httpOnly: true,
         sameSite: "None",
         ...(ENVIRONMENT_PROD
           ? {
-              secure: true,
-              domain: HOSTNAME,
+              domain: FRONTEND_URL,
+              path: "/",
             }
-          : { secure: true }),
+          : {}),
       });
 
       res.status(200).send({ status: true, data: { user, accessToken } });

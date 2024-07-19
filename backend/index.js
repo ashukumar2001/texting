@@ -30,10 +30,9 @@ import { GroupMembersModel } from "./models/index.js";
 import { RedisSessionStore } from "./store/sessionStore.js";
 import { RedisMessageStore } from "./store/messageStore.js";
 import { RedisChatsStore } from "./store/chatsStore.js";
-import { originList } from "./constants/app.config.js";
 const app = express();
 console.log(REDIS_HOST, REDIS_PORT);
-const corsOriginWhiteList = [...originList, FRONTEND_URL];
+// const corsOriginWhiteList = [FRONTEND_URL];
 export const redisClient = new Redis({
   port: REDIS_PORT,
   host: REDIS_HOST,
@@ -47,7 +46,7 @@ export const chatsStore = new RedisChatsStore(redisClient);
 app.use(
   cors({
     credentials: true,
-    origin: corsOriginWhiteList,
+    origin: FRONTEND_URL,
   })
 );
 app.use(express.json());
@@ -72,7 +71,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     credentials: true,
-    origin: corsOriginWhiteList,
+    origin: FRONTEND_URL,
   },
   path: "/ws",
   adapter: createAdapter({
