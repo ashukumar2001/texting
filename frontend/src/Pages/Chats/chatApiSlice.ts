@@ -81,4 +81,5 @@ export const {
   useLazyGetMessagesByGroupQuery,
   useLazyGetInboxListQuery,
   useGetOnlineStatusQuery,
+  useGetInboxQuery
 } = chatApiSlice;

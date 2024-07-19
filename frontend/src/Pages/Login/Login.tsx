@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { MdKeyboardArrowUp } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import chattingIllustration from "../../assets/images/chatting.svg";
-import Button from "../../Components/Button/Button";
 import styles from "./Login.module.scss";
 import { authSteps } from "../../utils/constants";
 import { useAppSelector } from "../../Hooks/redux";
 import { useNavigate } from "react-router-dom";
 import AnimatedPage from "../../Components/Animated/AnimatedPage";
 import SignInStep from "../../Components/AuthSteps/SignInStep";
+import { Button } from "@/Components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { cn } from "@/lib/utils";
 const Home = () => {
   const [isDrawerExtended, setIsDrawerExtended] = useState<boolean>(false);
   const { currentPageStep, user } = useAppSelector((state) => state.auth);
@@ -58,8 +60,7 @@ const Home = () => {
             styles.bottomDrawer
           } ${isDrawerExtended ? styles.bottomDrawerExtended : ""}`}
         >
-          {/* {(currentPageStep === 0 !) && ( */}
-          <Button
+          {/* <Button
             onClick={() => {
               setIsDrawerExtended(!isDrawerExtended);
             }}
@@ -72,12 +73,25 @@ const Home = () => {
                 }`}
               />
             }
-          />
+          /> */}
+          <Button
+            onClick={() => {
+              setIsDrawerExtended((prev) => !prev);
+            }}
+            size="icon"
+            variant="default"
+            className={cn(
+              "rounded-full absolute inset-x-1/2 -translate-x-1/2 -translate-y-1/2",
+              isDrawerExtended && "rotate-180"
+            )}
+          >
+            <ChevronUp size={16} />
+          </Button>
           <div>
             <motion.p
               initial={{ opacity: 0, width: "fit-content" }}
               animate={{ opacity: 1, width: "fit-content" }}
-              className={`text-gray-600 text-center text-base font-bold -mt-2  transition-all duration-300 mx-auto ${
+              className={`text-gray-600 text-center text-base font-bold mt-8  transition-all duration-700 mx-auto ${
                 !isDrawerExtended ? "animate-bounce" : ""
               }`}
             >

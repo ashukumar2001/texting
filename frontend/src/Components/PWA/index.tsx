@@ -37,6 +37,9 @@ const PWA = () => {
         .then((subscription) => {
           // save subscription to server
           saveSubscriptionToServer(subscription);
+        })
+        .catch((error) => {
+          console.error(error);
         });
     } else {
       console.error("Push Manager is not available");

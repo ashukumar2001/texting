@@ -117,7 +117,7 @@ class AuthController {
               secure: true,
               domain: HOSTNAME,
             }
-          : { secure: false }),
+          : { secure: true }),
       });
 
       res.status(200).send({ status: true, data: { user, accessToken } });

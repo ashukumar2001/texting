@@ -15,6 +15,7 @@ import {
 import { initializeSocket, socket } from "../ws/socket";
 import { useAppDispatch, useAppSelector } from "./redux";
 import MessageRecievedSound from "../assets/sounds/message-recieved.wav";
+import { setSocketStatus } from "@/ws/socketSlice";
 
 export interface socketMessageInterface {
   content: { messageText: string; timestamp: number };
@@ -169,6 +170,19 @@ const useInitializeSockets = () => {
       // socket.off("group:update_unread_message");
     };
   }, [currentGroupId]);
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      dispatch(setSocketStatus(socket.connected))
+    })
+    socket.on("disconnect", () => {
+      dispatch(setSocketStatus(socket.connected))
+    })
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+    }
+  }, [])
 
   return null;
 };
