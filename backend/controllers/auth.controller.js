@@ -117,6 +117,7 @@ class AuthController {
 
       res.status(200).send({ status: true, data: { user, accessToken } });
     } catch (err) {
+      console.log(err);
       return next(ErrorHandlerService.invalidAuthToken());
     }
   }
