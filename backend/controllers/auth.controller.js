@@ -112,12 +112,12 @@ class AuthController {
         secure: true,
         httpOnly: true,
         sameSite: "None",
-        ...(ENVIRONMENT_PROD
-          ? {
-              domain: HOST_DOMAIN,
-              path: "/",
-            }
-          : {}),
+        // ...(ENVIRONMENT_PROD
+        //   ? {
+        //       domain: HOST_DOMAIN,
+        //       path: "/",
+        //     }
+        //   : {}),
       });
 
       res.status(200).send({ status: true, data: { user, accessToken } });
