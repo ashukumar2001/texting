@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import auth from "./Components/AuthSteps/authSlice";
 import search from "./Components/Search/searchSlice";
 import chat from "./Pages/Chats/chatSlice";
+import socket from "./ws/socketSlice";
 import { persistStore, persistReducer, REGISTER, PERSIST } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { apiSlice } from "./api/apiSlice";
@@ -12,6 +13,7 @@ const reducers = combineReducers({
   auth,
   search,
   chat,
+  socket
 });
 const persistConfig = {
   key: "root",

@@ -86,6 +86,9 @@ io.use(async (socket, next) => {
   const sessionId = socket.handshake.auth.sessionId;
 
   try {
+    if (!token) {
+      return next(new Error("Unauthorized"));
+    }
     if (sessionId) {
       // do check existing session
       const session = await sessionStore.findSession(sessionId);
@@ -94,29 +97,29 @@ io.use(async (socket, next) => {
         socket.userId = session.userId;
         let user = await UserService.findUser(
           { _id: session.userId },
-          "fullName profilePicture"
+          "fullName profilePicture userName"
         );
-        if (user.fullName && user.profilePicture) {
+        if (user.fullName && user.profilePicture && user.userName) {
           socket.fullName = user.fullName;
           socket.profilePicture = user.profilePicture;
+          socket.userName = user.userName;
         }
         return next();
       }
     }
-    if (!token) {
-      return next(new Error("Unauthorized"));
-    }
+
     const user = await TokenService.verifyAccessToken(token);
     if (user && user._id) {
       socket.sessionId = crypto.randomBytes(16).toString("hex");
       socket.userId = user._id;
       let userDetails = await UserService.findUser(
         { _id: user._id },
-        "fullName profilePicture"
+        "fullName profilePicture userName"
       );
-      if (userDetails.fullName && userDetails.profilePicture) {
+      if (userDetails.fullName && userDetails.profilePicture && user.userName) {
         socket.fullName = userDetails.fullName;
         socket.profilePicture = userDetails.profilePicture;
+        socket.userName = user.userName;
       }
       next();
     } else {
@@ -140,6 +143,7 @@ io.on("connection", async (socket) => {
   });
 
   // join the room with userId
+  console.log("connected", socket.userId);
   socket.join(socket.userId);
 
   // update online status
@@ -235,6 +239,81 @@ io.on("connection", async (socket) => {
   socket.on("group:seen_unread_message", ({ groupId }) => {
     chatsStore.seenUnreadMessage(socket.userId, groupId);
   });
+  socket.on("nearby_people:update", async (data) => {
+    // update the user's coordinates
+    const coords = data.coords;
+    await redisClient.geoadd(
+      "nearby_people:coords",
+      coords.longitude,
+      coords.latitude,
+      socket.userId
+    );
+    // find nearby people within the given radius
+    const nearbyPeople = await redisClient.georadius(
+      "nearby_people:coords",
+      coords.longitude,
+      coords.latitude,
+      data.radius,
+      "m",
+      "WITHCOORD"
+    );
+    console.log(data);
+    if (nearbyPeople.length > 0) {
+      const socketPromises = [];
+      const coordsMap = {};
+      // send the new coordinates to all the nearby people
+      nearbyPeople.forEach((nearbyUser) => {
+        if (nearbyUser[0] !== socket.userId) {
+          socketPromises.push(io.in(nearbyUser[0]).fetchSockets());
+          const coords = nearbyUser[1].reverse();
+          coordsMap[nearbyUser[0]] = coords;
+          io.to(nearbyUser[0]).emit("nearby_people:update", {
+            userId: socket.userId,
+            fullName: socket.fullName,
+            profilePicture: socket.profilePicture,
+            userName: socket.userName,
+            coords,
+          });
+        }
+      });
+      // fetch all the nearby people's profiles from socket connections
+      const socketConnections = await Promise.all(socketPromises);
+      const nearbyPeoplePopulatedList = socketConnections
+        .flat()
+        .map((item) => ({
+          userId: item.userId,
+          fullName: item.fullName,
+          userName: item.userName,
+          profilePicture: item.profilePicture,
+          coords: coordsMap[item.userId],
+        }));
+      // send back the nearby people's list
+      io.to(socket.userId).emit(
+        "nearby_people:list",
+        nearbyPeoplePopulatedList
+      );
+    }
+  });
+  socket.on(
+    "nearby_people:disconnect",
+    async ({ latitude, longitude, radius }) => {
+      await redisClient.zrem("nearby_people:coords", socket.userId);
+      const nearbyPeople = await redisClient.georadius(
+        "nearby_people:coords",
+        longitude,
+        latitude,
+        radius,
+        "km"
+      );
+      if (nearbyPeople.length > 0) {
+        // send the disconneted userId to all users within the radius
+        nearbyPeople.forEach((nearbyUserId) => {
+          if (nearbyUserId !== socket.userId)
+            io.to(nearbyUserId).emit("nearby_people:disconnect", socket.userId);
+        });
+      }
+    }
+  );
 
   socket.on("disconnect", async () => {
     const matchingSockets = await io.in(socket.userId).allSockets();

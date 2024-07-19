@@ -9,7 +9,7 @@ function App() {
   useInitializeSockets();
 
   return (
-    <div className="App bg-gray-100 xl:w-4/12 lg:w-1/2 md:w-3/4 w-full mx-auto">
+    <div className="App bg-background xl:w-4/12 lg:w-1/2 md:w-3/4 w-full mx-auto">
       <PWA />
       <ToastContainer
         hideProgressBar={true}

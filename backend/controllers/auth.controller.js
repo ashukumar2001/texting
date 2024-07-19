@@ -106,10 +106,13 @@ class AuthController {
       res.cookie("refreshToken", refreshToken, {
         maxAge: 1000 * 60 * 60 * 24 * 15,
         httpOnly: true,
-        ...(ENVIRONMENT_PROD && {
-          sameSite: "None",
-          secure: true,
-        }),
+        sameSite: "None",
+        ...(ENVIRONMENT_PROD
+          ? {
+              secure: true,
+              domain: HOSTNAME,
+            }
+          : { secure: true }),
       });
 
       res.status(200).send({ status: true, data: { user, accessToken } });

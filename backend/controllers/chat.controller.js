@@ -6,6 +6,7 @@ class ChatController {
     try {
       const { id } = req.user;
       const filters = req.query;
+      console.log(filters);
       if (!id) {
         return next(ErrorHandlerService.unAuthorizedAccess());
       }
@@ -16,6 +17,8 @@ class ChatController {
           // fetch list of inbox with given userId
           data = await ChatService.getInbox(id);
         }
+      } else if (id && filters && Object.keys(filters).length > 0) {
+        data = await ChatService.getInbox(id, filters);
       }
       return res.send({ status: true, result: data });
     } catch (error) {

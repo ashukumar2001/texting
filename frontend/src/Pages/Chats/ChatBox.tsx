@@ -14,10 +14,12 @@ import {
   useGetMessagesByGroupQuery,
   useGetOnlineStatusQuery,
 } from "./chatApiSlice";
-import { clearCurrentInbox, setCurrentPage } from "./chatSlice";
+import {
+  clearCurrentInbox,
+  setCurrentInbox,
+  setCurrentPage,
+} from "./chatSlice";
 import ChatMessage from "./ChatMessage";
-import UserImage from "../../Components/UserImage";
-
 export interface MessageInterface {
   content: {
     messageText: string;
@@ -32,6 +34,7 @@ const ChatBox = () => {
     (state) => state.chat.currentInobx.currentPage
   );
   const currentInboxData = useAppSelector((state) => state.chat.currentInobx);
+  const [getInbox] = chatApiSlice.endpoints.getInbox.useLazyQuerySubscription();
   const userId = useAppSelector((state) => state.auth.user._id);
   const checkInputRef: RefObject<HTMLElement | undefined> = useRef(null);
   const { data: lastResult } = useGetMessagesByGroupQuery({
@@ -42,7 +45,6 @@ const ChatBox = () => {
     groupId: currentInboxData.groupId as string,
     currentPage: currentPage,
   });
-
   const { data: onlineStatusResult } = useGetOnlineStatusQuery(
     {
       userId: currentInboxData.participant?._id || "",
@@ -76,27 +78,6 @@ const ChatBox = () => {
     [combineMessages, message, isShowEmojiInput]
   );
   useEffect(() => {
-    // if (currentInboxData?.groupId) {
-    //   dispatch(
-    //     setCurrentInbox({
-    //       group: currentInboxData.groupId,
-    //       inboxId: currentInboxData.inboxId,
-    //     })
-    //   );
-    // } else if (!currentInboxData?.groupId && params.participantId) {
-    //   setCurrentInbox({
-    //     participantId: params.participantId,
-    //   });
-    // }
-
-    // return () => {
-    //   dispatch(clearCurrentInbox());
-    // };
-
-    if (!currentInboxData.groupId) {
-      console.log("there is no groupId");
-    }
-
     return () => {
       dispatch(clearCurrentInbox());
     };
@@ -170,6 +151,26 @@ const ChatBox = () => {
     }
   }, [combineMessages]);
 
+  // fetch inboxId and groupId if exists
+  useEffect(() => {
+    if (!currentInboxData.groupId && !currentInboxData.inboxId) {
+      getInbox({ participant: currentInboxData.participant?._id }, true).then(
+        ({ isSuccess, data }) => {
+          if (isSuccess && data?.inboxId && data?.group) {
+            dispatch(
+              setCurrentInbox({
+                groupId: data.group,
+                inboxId: data.inboxId,
+                participant: data.participant,
+                unreadMessageCount: data.unreadMessageCount || 0,
+              })
+            );
+          }
+        }
+      );
+    }
+  }, [currentInboxData]);
+
   return (
     <AnimatedPage>
       <div className="w-full sticky top-0 z-10 scroll-smoot bg-backdrop-25 backdrop-blur-xl backdrop-saturate-150 shadow-sm">
@@ -185,11 +186,25 @@ const ChatBox = () => {
             icon={<MdArrowBack className="text-gray-600 text-2xl" />}
             className="flex justify-center items-center bg-transparent -ml-3 mr-2"
           />
-          <UserImage
-            online_status={onlineStatusResult?.online_status}
-            fullName={currentInboxData?.participant?.fullName}
-            profilePicture={currentInboxData?.participant?.profilePicture}
-          />
+
+          <div className="h-12 w-12 flex justify-center items-center rounded-full border relative">
+            <img
+              src={currentInboxData?.participant?.profilePicture}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = getAvatarUrlFromSeed(
+                  currentInboxData?.participant?.fullName
+                );
+              }}
+              alt={currentInboxData?.participant?.fullName}
+              className="w-full h-full rounded-full"
+            />
+            {onlineStatusResult?.online_status && (
+              <div
+                title="online"
+                className="h-3 w-3 rounded-full bg-[#00a67e] absolute -right-1 -bottom-2 -translate-y-1/2 -translate-x-1/2"
+              ></div>
+            )}
+          </div>
           <p className="text-gray-600 text-base font-bold tracking-wider ml-4">
             {currentInboxData?.participant?.fullName}
           </p>

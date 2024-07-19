@@ -6,7 +6,11 @@ import { useGetInboxListQuery } from "./chatApiSlice";
 import { setCurrentInbox } from "./chatSlice";
 
 const ChatsTab = () => {
-  const { data: inboxList, isLoading, isSuccess } = useGetInboxListQuery({});
+  const {
+    data: inboxList,
+    isLoading,
+    isSuccess,
+  } = useGetInboxListQuery({}, { refetchOnMountOrArgChange: true });
   const dispatch = useAppDispatch();
   return (
     <AnimatePresence>
