@@ -1,5 +1,5 @@
-import { MdArrowBack } from "react-icons/md";
-import Button from "../Button/Button";
+import { Button } from "../ui/button";
+import { ArrowLeft } from "lucide-react";
 
 interface PageHeaderProps {
   title: string;
@@ -14,15 +14,11 @@ const PageHeader = ({ title, handleGoBack }: PageHeaderProps) => {
     >
       <div className="w-full h-20 flex justify-start items-center px-4">
         {handleGoBack && (
-          <Button
-            isDisableRipple
-            variant="icon-only"
-            className="flex justify-center items-center bg-transparent my-0 -ml-3 mr-2"
-            onClick={handleGoBack}
-            icon={<MdArrowBack className="text-para-100 text-2xl" />}
-          />
+          <Button variant="ghost" size="icon" onClick={handleGoBack}>
+            <ArrowLeft size={20} strokeWidth={1.75} />
+          </Button>
         )}
-        <p className="text-gray-600 text-left text-xl font-medium mb-0 transition-all">
+        <p className="text-left text-md font-medium mb-0 transition-all ml-2">
           {title}
         </p>
       </div>

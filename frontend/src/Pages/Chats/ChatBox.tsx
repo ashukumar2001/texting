@@ -14,9 +14,12 @@ import {
   useGetMessagesByGroupQuery,
   useGetOnlineStatusQuery,
 } from "./chatApiSlice";
-import { clearCurrentInbox, setCurrentPage } from "./chatSlice";
+import {
+  clearCurrentInbox,
+  setCurrentInbox,
+  setCurrentPage,
+} from "./chatSlice";
 import ChatMessage from "./ChatMessage";
-
 export interface MessageInterface {
   content: {
     messageText: string;
@@ -31,6 +34,7 @@ const ChatBox = () => {
     (state) => state.chat.currentInobx.currentPage
   );
   const currentInboxData = useAppSelector((state) => state.chat.currentInobx);
+  const [getInbox] = chatApiSlice.endpoints.getInbox.useLazyQuerySubscription();
   const userId = useAppSelector((state) => state.auth.user._id);
   const checkInputRef: RefObject<HTMLElement | undefined> = useRef(null);
   const { data: lastResult } = useGetMessagesByGroupQuery({
@@ -41,7 +45,6 @@ const ChatBox = () => {
     groupId: currentInboxData.groupId as string,
     currentPage: currentPage,
   });
-
   const { data: onlineStatusResult } = useGetOnlineStatusQuery(
     {
       userId: currentInboxData.participant?._id || "",
@@ -75,27 +78,6 @@ const ChatBox = () => {
     [combineMessages, message, isShowEmojiInput]
   );
   useEffect(() => {
-    // if (currentInboxData?.groupId) {
-    //   dispatch(
-    //     setCurrentInbox({
-    //       group: currentInboxData.groupId,
-    //       inboxId: currentInboxData.inboxId,
-    //     })
-    //   );
-    // } else if (!currentInboxData?.groupId && params.participantId) {
-    //   setCurrentInbox({
-    //     participantId: params.participantId,
-    //   });
-    // }
-
-    // return () => {
-    //   dispatch(clearCurrentInbox());
-    // };
-
-    if (!currentInboxData.groupId) {
-      console.log("there is no groupId");
-    }
-
     return () => {
       dispatch(clearCurrentInbox());
     };
@@ -169,6 +151,26 @@ const ChatBox = () => {
     }
   }, [combineMessages]);
 
+  // fetch inboxId and groupId if exists
+  useEffect(() => {
+    if (!currentInboxData.groupId && !currentInboxData.inboxId) {
+      getInbox({ participant: currentInboxData.participant?._id }, true).then(
+        ({ isSuccess, data }) => {
+          if (isSuccess && data?.inboxId && data?.group) {
+            dispatch(
+              setCurrentInbox({
+                groupId: data.group,
+                inboxId: data.inboxId,
+                participant: data.participant,
+                unreadMessageCount: data.unreadMessageCount || 0,
+              })
+            );
+          }
+        }
+      );
+    }
+  }, [currentInboxData]);
+
   return (
     <AnimatedPage>
       <div className="w-full sticky top-0 z-10 scroll-smoot bg-backdrop-25 backdrop-blur-xl backdrop-saturate-150 shadow-sm">
@@ -199,7 +201,7 @@ const ChatBox = () => {
             {onlineStatusResult?.online_status && (
               <div
                 title="online"
-                className="outline-2 outline outline-gray-0 h-3 w-3 rounded-full bg-green-active absolute -right-1 -bottom-2 -translate-y-1/2 -translate-x-1/2"
+                className="h-3 w-3 rounded-full bg-[#00a67e] absolute -right-1 -bottom-2 -translate-y-1/2 -translate-x-1/2"
               ></div>
             )}
           </div>
