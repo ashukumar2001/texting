@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "me.ashudev.texting.twa",
+            "sha256_cert_fingerprints": [
+                "27:41:FE:9C:16:D3:79:54:6A:43:C2:AC:88:2A:03:A8:46:6A:C8:63:1F:55:3E:DD:D2:40:0C:CA:FB:F8:5D:3E"
+            ]
+        }
+    }
+]
